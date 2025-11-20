@@ -29,13 +29,11 @@ import numpy as np
 text = "The quick brown fox jumps over the lazy dog!"
 
 # Write a list comprehension to tokenize the text and remove punctuation
-tokens = _ # Your code here
+tokens = ["".join([char for char in word if char not in ['.', ',', '!', '?', ':', ';']]) for word in text.split()]
 
 # Expected output: ['The', 'quick', 'brown', 'fox', 'jumps', 'over', 'the', 'lazy', 'dog']
 print(tokens)
 # -----------------------------------------------
-
-
 
 
 # Task 2: Create a function that takes a string and breaks it up into tokens and removes any 
@@ -45,9 +43,10 @@ print(tokens)
 # Your code here:
 # -----------------------------------------------
 def tokenize(string: str) -> list:
-    pass # Your code
-
-
+    tokens = ["".join([char for char in word if char not in ['.', ',', '!', '?', ':', ';']]) 
+          for word in text.lower().split()]
+    vocab = list(set(tokens))
+    return sorted(vocab)
 # -----------------------------------------------
 
 
@@ -74,8 +73,7 @@ def tokenize(string: str) -> list:
 
 # Your code here:
 # -----------------------------------------------
-word_frequencies = _ # Your code here
-
+word_frequencies = {word: [token.lower() for token in tokens].count(word) for word in tokenize(tokens)}
 # Expected output example: {'the': 2, 'quick': 1, ...}
 print(word_frequencies)
 
@@ -90,7 +88,11 @@ print(word_frequencies)
 # Your code here:
 # -----------------------------------------------
 def token_counts(string: str, k: int = 1) -> dict:
-    pass # Your code
+    tokens = ["".join([char for char in word if char not in ['.', ',', '!', '?', ':', ';']]) 
+        for word in text.lower().split()]
+    vocab = list(set(tokens))
+    return {word: [token.lower() for token in tokens].count(word) for word in tokenize(tokens) if [token.lower() for token in tokens].count(word) > k}
+
 
 # test:
 text_hist = {'the': 2, 'quick': 1, 'brown': 1, 'fox': 1, 'jumps': 1, 'over': 1, 'lazy': 1, 'dog': 1}
