@@ -152,8 +152,14 @@ assert all(id_to_token[token_to_id[key]]==key for key in token_to_id) and all(to
 # Your code here:
 # -----------------------------------------------
 def make_vocabulary_map(documents: list) -> tuple:
-    # Hint: use your tokenize function
-    pass # Your code
+    # Make list with strings one string
+    string = " ".join(documents)
+    # tokenizes the string and returns unique values
+    tokens = tokenize(string)
+    # Create dictionaries
+    token2int = {word: i for i, word in enumerate(set(tokens))}
+    int2token = {id: token for token, id in token2int.items()}
+    return token2int,  int2token
 
 # Test
 t2i, i2t = make_vocabulary_map([text])
