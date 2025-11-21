@@ -87,7 +87,7 @@ print(word_frequencies)
 # Your code here:
 # -----------------------------------------------
 def token_counts(string: str, k: int = 1) -> dict:
-    tokens = ''.join([char if char.isalnum() else ' ' for char in text.lower()]).split()
+    tokens = ''.join([char if char.isalnum() else ' ' for char in string.lower()]).split()
     return {word: tokens.count(word) for word in tokens if tokens.count(word) >= k}
 
 # test:
