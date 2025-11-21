@@ -43,7 +43,7 @@ print(tokens)
 # Your code here:
 # -----------------------------------------------
 def tokenize(string: str) -> list:
-    tokens = ["".join([char for char in word.lower() if char.isdigit() or char.isalpha()]) for word in text.split()]
+    tokens = ["".join([char for char in word.lower() if char.isdigit() or char.isalpha()]) for word in string.split()]
     vocab = list(set(tokens))
     return sorted(vocab)
 # -----------------------------------------------
