@@ -43,9 +43,9 @@ print(tokens)
 # Your code here:
 # -----------------------------------------------
 def tokenize(string: str) -> list:
-    tokens = ''.join([char if char.isalnum() else ' ' for char in text.lower()]).split()
-    vocab = list(set(tokens))
-    return sorted(vocab)
+    tokens = ''.join([char if char.isalnum() else ' ' for char in string.lower()]).split()
+    vocab = sorted(list(set(tokens)))
+    return vocab
 # -----------------------------------------------
 
 
@@ -152,12 +152,10 @@ assert all(id_to_token[token_to_id[key]]==key for key in token_to_id) and all(to
 # Your code here:
 # -----------------------------------------------
 def make_vocabulary_map(documents: list) -> tuple:
-    # Make list with strings one string
     string = " ".join(documents)
-    # tokenizes the string and returns unique values
-    tokens = tokenize(string)
-    # Create dictionaries
-    token2int = {word: i for i, word in enumerate(set(tokens))}
+    vocab = tokenize(string)
+    token2int = {word: i for i, word in enumerate(vocab)}
+    print(token2int)
     int2token = {id: token for token, id in token2int.items()}
     return token2int,  int2token
 
@@ -177,9 +175,14 @@ all(i2t[t2i[tok]] == tok for tok in t2i) # should be True
 
 # Your code here:
 # -----------------------------------------------
-def tokenize_and_encode(documents: list) -> list:
-    # Hint: use your make_vocabulary_map and tokenize function
-    pass # Your code
+def tokenize_and_encode(documents: list) -> tuple:
+    # Create vocabulary maps
+    t2i, i2t = make_vocabulary_map(documents)
+    # tokenize each string in the document
+    tokenized_doc = [''.join([char if char.isalnum() else ' ' for char in string.lower()]).split() for string in documents]
+    # Encode each string in the document
+    encoded_sentences = [[t2i[word] for word in string] for string in tokenized_doc]
+    return encoded_sentences, t2i, i2t
 
 # Test:
 enc, t2i, i2t = tokenize_and_encode([text, 'What a luck we had today!'])
@@ -205,7 +208,7 @@ enc, t2i, i2t = tokenize_and_encode([text, 'What a luck we had today!'])
 
 # Your code here:
 # -----------------------------------------------
-sigmoid = _ # Your code
+sigmoid = lambda x: 1 / (1 + np.exp(-x))
 
 # Test:
 np.all(sigmoid(np.log([1, 1/3, 1/7])) == np.array([1/2, 1/4, 1/8]))
@@ -280,7 +283,28 @@ np.all(sigmoid(np.log([1, 1/3, 1/7])) == np.array([1/2, 1/4, 1/8]))
 # Your code here:
 # -----------------------------------------------
 def rnn_layer(w: np.array, list_of_sequences: list[np.array], sigma=sigmoid ) -> np.array:
-    pass # Your code
+    # 1. Setup
+    W = np.array(w[0:9]).reshape(3, 3)
+    U = np.array(w[9:18]).reshape(3, 3)
+    B = np.array(w[18:21]).reshape(1, 3)
+    
+    nr_sequences = len(list_of_sequences)
+    outputs = np.full(nr_sequences, np.nan)
+
+    # 2. Iterate over sequences
+    for i in range(nr_sequences):
+        # i-th sequence
+        X = list_of_sequences[i]
+    
+        # initialize hidden state to 0
+        a = np.zeros(X[0].shape)
+    
+        # iterate over the time points
+        for j in range(X.shape[0]):
+            a = W @ X[j] + U @ a  
+    
+        # store RNN output for the i-th sequence
+        outputs[i] = B @ a
 
 # Test
 np.random.seed(10)
@@ -314,8 +338,9 @@ o.shape == (100,) and o.mean().round(3) == 16.287 and o.std().astype(int) == 133
 
 # Your code here:
 # -----------------------------------------------
-def rnn_loss(w: np.array, w, list_of_sequences: list[np.array], y: np.array) -> np.float64:
-    pass # Your code
+def rnn_loss(w: np.array, list_of_sequences: list[np.array], y: np.array) -> np.float64:
+    pred = rnn_layer(w, list_of_sequences)
+    return np.sum((y - pred)**2)
 
 # Test:
 y = np.array([(X @ np.arange(1,4))[0] for X in list_of_sequences])
